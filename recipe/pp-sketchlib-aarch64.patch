@@ -1,7 +1,17 @@
-diff --git i/CMakeLists.txt w/CMakeLists.txt
-index 0adda45..a813d93 100644
---- i/CMakeLists.txt
-+++ w/CMakeLists.txt
+From fa3bf2824d50daa3b5d6dee14cd200ae28efb5b3 Mon Sep 17 00:00:00 2001
+From: John Lees <lees.john6@gmail.com>
+Date: Mon, 8 Jun 2026 14:22:04 +0100
+Subject: [PATCH] conda-forge patch
+
+---
+ CMakeLists.txt | 2 +-
+ src/Makefile   | 7 +++----
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e06155a..f22852d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -38,7 +38,7 @@ if(UNIX AND NOT APPLE)
  endif()
  
@@ -11,15 +21,16 @@ index 0adda45..a813d93 100644
  
  # Set paths for non standard lib/ and include/ locations
  if(DEFINED ENV{CONDA_PREFIX})
-diff --git i/src/Makefile w/src/Makefile
-index feac46b..a719e39 100644
---- i/src/Makefile
-+++ w/src/Makefile
-@@ -11,10 +11,10 @@ else
+diff --git a/src/Makefile b/src/Makefile
+index bcd4c7b..71b74ae 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -10,11 +10,10 @@ else
+   CUDAFLAGS = -O3
  endif
  
- UNAME_S := $(shell uname -s)
-+UNAME_M := $(shell uname -m)
+-UNAME_S := $(shell uname -s)
++UNAME_S := $(shell uname -m)
  LIBLOC = ${CONDA_PREFIX}
  LDLIBS = -lz -lhdf5_cpp -lhdf5 -lopenblas -lgomp
  ifeq ($(UNAME_S),Linux)
@@ -27,21 +38,19 @@ index feac46b..a719e39 100644
  	ifdef PROFILE
  		CXXFLAGS+= -Wl,--compress-debug-sections=none
  	endif
-@@ -29,7 +29,7 @@ CPPFLAGS+=-I"." -I$(LIBLOC)/include -I$(LIBLOC)/include/eigen3
+@@ -29,10 +28,10 @@ CPPFLAGS+=-I"." -I$(LIBLOC)/include -I$(LIBLOC)/include/eigen3
  LDFLAGS+= -L$(LIBLOC)/lib
  CUDA_LDLIBS=-lcudadevrt -lcudart_static $(LDLIBS)
  
--CUDA_LDFLAGS =-L$(LIBLOC)/lib -L${CUDA_HOME}/targets/x86_64-linux/lib/stubs -L${CUDA_HOME}/targets/x86_64-linux/lib
+-CUDA_LDFLAGS =-L$(LIBLOC)/lib -L${CUDA_HOME}/targets/x86_64-linux/lib/stubs -L${CUDA_HOME}/targets/x86_64-linux/lib -L${CUDA_HOME}/lib64
 +CUDA_LDFLAGS =-L$(LIBLOC)/lib -L${CUDA_HOME}/lib/stubs -L${CUDA_HOME}/lib
- CUDAFLAGS +=-std=c++17 -Xcompiler -fPIC --cudart static --relocatable-device-code=true --expt-relaxed-constexpr -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75
- ifdef GPU
- 	CXXFLAGS += -DGPU_AVAILABLE
-@@ -37,7 +37,7 @@ ifdef GPU
- 	CUDA_LDFLAGS += -L/usr/local/cuda-11.2/lib64
- endif
+ CUDAFLAGS +=-std=c++17 -Xcompiler -fPIC --cudart static --relocatable-device-code=true --expt-relaxed-constexpr -gencode arch=compute_75,code=sm_75 -gencode arch=compute_86,code=sm_86 -gencode arch=compute_90,code=sm_90 -gencode arch=compute_100,code=sm_100
  
 -PYTHON_LIB = pp_sketchlib$(shell python3-config --extension-suffix)
 +PYTHON_LIB = pp_sketchlib$(shell python -c 'import sysconfig; print(sysconfig.get_config_var("EXT_SUFFIX"))')
  
  # python specific options
  python: CPPFLAGS += -DGPU_AVAILABLE -DPYTHON_EXT -DNDEBUG -Dpp_sketchlib_EXPORTS $(shell python3 -m pybind11 --includes)
+-- 
+2.50.1 (Apple Git-155)
+
